@@ -2,10 +2,35 @@
 
 global.root_dir = __dirname;
 
-const Server = require( global.root_dir + '/inc_shr/server/server.js' );
-const server = new Server();
+//Load config
+new ( require( `${global.root_dir}/config/config.js` ) )();
 
-const Config = require( `${global.root_dir}/config/config.js` );
-const config = new Config();
+const Server = require( `${global.root_dir}/inc_shr/server/server.js` );
+const Route  = require( `${global.root_dir}/inc_shr/route.mod/route.js` );
 
-server.start();
+const route = new Route(
+	{
+		prefix: global.api.baseRoutePrefix
+	}
+);
+const App    = require( `${global.root_dir}/inc_shr/server/app.js` );
+
+route.loadRoutes();
+route.pageNotFound( (req, res) =>
+	{
+		res.writeHead( 404,
+			{
+				'Content-Type': 'application/json'
+			}
+		);
+
+		res.end( JSON.stringify(
+			{
+				'status': 404,
+				'message': 'Not found'
+			}
+		));
+	}
+);
+
+Server.start();

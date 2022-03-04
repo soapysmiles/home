@@ -1,24 +1,24 @@
 'use strict';
 
 const cmds = {
-	Reset: '\x1b[0m',
-	Bright: '\x1b[1m',
-	Dim: '\x1b[2m',
+	Reset:      '\x1b[0m',
+	Bright:     '\x1b[1m',
+	Dim:        '\x1b[2m',
 	Underscore: '\x1b[4m',
-	Blink: '\x1b[5m',
-	Reverse: '\x1b[7m',
-	Hidden: '\x1b[8m',
+	Blink:      '\x1b[5m',
+	Reverse:    '\x1b[7m',
+	Hidden:     '\x1b[8m',
 };
 
 const colours = {
-	FgBlack: '\x1b[30m',
-	FgRed: '\x1b[31m',
-	FgGreen: '\x1b[32m',
-	FgYellow: '\x1b[33m',
-	FgBlue: '\x1b[34m',
+	FgBlack:   '\x1b[30m',
+	FgRed:     '\x1b[31m',
+	FgGreen:   '\x1b[32m',
+	FgYellow:  '\x1b[33m',
+	FgBlue:    '\x1b[34m',
 	FgMagenta: '\x1b[35m',
-	FgCyan: '\x1b[36m',
-	FgWhite: '\x1b[37m',	
+	FgCyan:    '\x1b[36m',
+	FgWhite:   '\x1b[37m',
 };
 
 exports.black    = (string) => `${colours.FgBlack}${string}${cmds.Reset}`;
@@ -41,7 +41,7 @@ exports.endLog = () => {console.log();};
 
 exports.ask = async (question) => {
 	const readline = require('readline').createInterface({
-	  input: process.stdin,
+	  input:  process.stdin,
 	  output: process.stdout
 	});
 	

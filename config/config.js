@@ -1,7 +1,5 @@
 class Config {
 
-	status      = '';
-	file_arr    = [];
 	main_config = __filename.slice( __dirname.length + 1 );
 
 	constructor()

@@ -1,62 +1,77 @@
 const cmd = require( `${global.root_dir}/inc_shr/cmd.js` );
+const Route = require( `${ global.root_dir }/inc_shr/route.mod/route.js` );
+const route = new Route();
 
-class Server {
+let status = 'pending';
+let server = null;
 
-	status = 'pending';
-	server = null;
-	route  = null;
+function start()
+{
+	if( status !== 'pending' )
+		throw new Error( 'Cannot start server; already started' );
 
-	constructor()
-	{
-		if( Server._instance )
-			return Server._instance;
+	status = 'opening';
+	_openServer();
+}
 
-		const Route = require( `${ global.root_dir }/inc_shr/server/route.js` );
+function _setExitHandler()
+{
+	process.stdin.resume();//so the program will not close instantly
 
-		this.route = new Route();
+	//do something when app is closing
+	process.on('exit', _exitHandler.bind(null,{cleanup:true}));
 
-		Server._instance = this;
-	}
+	//catches ctrl+c event
+	process.on('SIGINT', _exitHandler.bind(null, {exit:true}));
 
-	start()
-	{
-		if( this.status !== 'pending' )
-			throw new Error( 'Cannot start server; already started' );
+	// catches "kill pid" (for example: nodemon restart)
+	process.on('SIGUSR1', _exitHandler.bind(null, {exit:true}));
+	process.on('SIGUSR2', _exitHandler.bind(null, {exit:true}));
 
-		this.openServer();
-	}
+	//catches uncaught exceptions
+	process.on('uncaughtException', _exitHandler.bind(null, {exit:true}));
+}
 
-	openServer()
-	{
-		const http = require('http');
+function _exitHandler()
+{
+	server.close();
+}
 
-		this.server = http.createServer( this.handleRequest );
+function getStatus()
+{
+	return status;
+}
 
-		this.server.listen( global.server.port );
+function handleRequest( req, res )
+{
+	route.determineRoute( req, res );
+}
 
-		console.log(
-			cmd.yellow( '[NOTICE]' ),
-			cmd.white( `Started server on port: ${ cmd.blue( global.server.port ) }` )
-		);
-	}
-
-	handleRequest( req, res )
-	{
-
-
-		console.log( {req, res} );
-		res.writeHead(200, { 'Content-Type': 'application/json' });
-	  res.end(JSON.stringify({
-	    data: 'Hello World!'
-	  }));
-
-	}
-
-	loadModule()
-	{
-
-	}
+function loadModule()
+{
 
 }
 
-module.exports = Server;
+function _openServer()
+{
+	const http = require('http');
+
+	server = http.createServer( handleRequest );
+
+	server.listen( global.server.port );
+
+	console.log(
+		cmd.yellow( '[NOTICE]' ),
+		cmd.white( `Started server on port: ${ cmd.blue( global.server.port ) }` )
+	);
+	status = 'started';
+
+	_setExitHandler();
+}
+
+module.exports = {
+	start,
+	handleRequest,
+	loadModule,
+	getStatus
+};

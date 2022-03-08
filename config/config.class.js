@@ -1,4 +1,5 @@
-class Config {
+class Config
+{
 
 	main_config = __filename.slice( __dirname.length + 1 );
 
@@ -24,6 +25,9 @@ class Config {
 		for( const config of config_arr )
 		{
 			if( config === this.main_config )
+				continue;
+
+			if( config.substring( 0, 7 ) !== 'config.' )
 				continue;
 
 			let conf_file = config.replace( 'config.', '' ).replace( '.js', '' );

@@ -3,10 +3,13 @@
 global.root_dir = __dirname;
 
 //Load config
-new ( require( `${global.root_dir}/config/config.js` ) )();
+new ( require( `${global.root_dir}/config/config.class.js` ) )();
 
-const Server = require( `${global.root_dir}/inc_shr/server/server.js` );
-const Route  = require( `${global.root_dir}/inc_shr/route.mod/route.js` );
+require( `${global.root_dir}/include/middleware/authenticate` )
+	.setTypeOpt( 'jwt', { secret: global.jwt.secret } );
+
+const Server      = require( `${global.root_dir}/inc_shr/server/server.js` );
+const Route        = require( `${global.root_dir}/inc_shr/route.mod/route.js` );
 
 const route = new Route(
 	{

@@ -1,4 +1,4 @@
-const cmd = require( `${global.root_dir}/inc_shr/cmd.js` );
+global.cmd = require( `${global.root_dir}/inc_shr/cmd.js` );
 const Route = require( `${ global.root_dir }/inc_shr/route.mod/route.js` );
 const route = new Route();
 
@@ -61,8 +61,8 @@ function _openServer()
 	server.listen( global.server.port );
 
 	console.log(
-		cmd.yellow( '[NOTICE]' ),
-		cmd.white( `Started server on port: ${ cmd.blue( global.server.port ) }` )
+		global.cmd.yellow( '[NOTICE]' ),
+		global.cmd.white( `Started server on port: ${ global.cmd.blue( global.server.port ) }` )
 	);
 	status = 'started';
 

@@ -1,4 +1,6 @@
 
+const responseHelper = require( './responseFunction.js' );
+
 let route_arr = {
 	GET:     {},
 	DELETE:  {},
@@ -13,30 +15,38 @@ async function determineRoute( req, res )
 	let url = req.url;
 	if( url.substring( url.length - 1, url.length ) === '/' )
 		url = url.substring( 0, url.length - 1 );
-console.log( url)
+
 	let route     = ( !route_arr[ req.method ] || !route_arr[ req.method ][ url ] ) ? false : route_arr[ req.method ][ url ];
 	let param_arr = {};
 
 	if( !route )
 	{
+		//We could not identify the route simply, let's check if any of the URL's path sections are params
+
 		const url_part_arr = url.split( '/' );
 
+		//Search each route in the method's route array
 		for( const route_path in route_arr[ req.method ] )
 		{
-			param_arr = {};
 			const temp_route = route_arr[ req.method ][ route_path ];
 
+			//We know this route expects no parameters, let's save the expensive operations for routes which do
 			if( !temp_route.expects_param )
 				continue;
 
+			//We must clear down param_arr as it could have been set by an incorrect route
+			param_arr = {};
+
 			let route_path_part_arr = route_path.split( '/' );
 
+			//Check through each of the route's params and attempt to replace the given URL's position with the route's URL position where we expect a param
 			for( const param_index in temp_route.param_arr )
 			{
 				route_path_part_arr[ param_index ] = url_part_arr[ param_index ];
 				param_arr[ temp_route.param_arr[param_index].name ] = url_part_arr[ param_index ];
 			}
 
+			//If the replaced-route now matches the URL, we've found our route!, otherwise continue
 			if( url !== route_path_part_arr.join( '/' ) )
 				continue;
 
@@ -45,22 +55,48 @@ console.log( url)
 		}
 	}
 
+	res.helper = responseHelper( req, res, param_arr );
+
+	//Well... we just don't know what you're looking for here
 	if( !route )
 	{
 		_pageNotFound( req, res );
 		return;
 	}
 
+	//Ensure to run
 	if( route.middleware_cb )
 	{
-		const resp = await route.middleware_cb( req, res, param_arr );
+		let resp = false;
 
+		try
+		{
+			resp = await route.middleware_cb( req, res, param_arr );
+		}
+		catch( e )
+		{
+			console.error( e );
+		}
+
+		//Do not run the response_cb & only return as middleware should handle everything else in the case of a failure
 		if( !resp )
+		{
+			if( res.finished )
+				return;
+
+			console.error( '[500|ERROR] Middleware did not handle request' );
+
+			res.helper.outputJson(
+				{
+					message: 'Could not handle request'
+				}, 500
+			);
+
 			return;
+		}
 
-		route.response_cb( req, res, param_arr );
-
-		return;
+		if( resp.param_arr )
+			param_arr = { ...resp.param_arr, param_arr };
 	}
 
 	route.response_cb( req, res, param_arr );
@@ -140,8 +176,11 @@ function _addRoute( method, path, callback_one = false, callback_two = false )
 
 	const path_part_arr = path.split( '/' );
 	let param_name_arr = {};
+
+	//Identify any parameters
 	for( let [ index, path_part ] of path_part_arr.entries() )
 	{
+
 		if( path_part.substring( 0, 1 ) === ':' )
 		{
 			path_part_arr[ index ] = '{#PARAM#}';

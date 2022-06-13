@@ -9,6 +9,11 @@ module.exports =
 		{
 			return authenticate.getCallback( type, opts )
 		},
+		getUserWithoutVerification: ( type, opts = {} ) =>
+		{
+			opts.getUserWithoutVerification = true;
+			return authenticate.getCallback( type, opts )
+		},
 		setTypeOpt: (type, opts ) =>
 		{
 			authenticate.setTypeOpt( type, opts );

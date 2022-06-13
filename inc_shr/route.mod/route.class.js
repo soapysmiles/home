@@ -1,4 +1,7 @@
+const proj_root_dir = process.cwd()
+
 const Controller = require( `./route.main.js` );
+const File = require( `${ proj_root_dir }/inc_shr/file.js` );
 
 class Route
 {
@@ -12,11 +15,9 @@ class Route
 
 	async loadRoutes()
 	{
-
-		const File = require( `${global.root_dir}/inc_shr/file.js` );
 		const file = new File();
 
-		const route_dir_arr = file.retrieveDirPathArr( global.root_dir, 'route' );
+		const route_dir_arr = file.retrieveDirPathArr( proj_root_dir, 'route' );
 
 		for( const route_dir of route_dir_arr )
 		{
@@ -38,7 +39,6 @@ class Route
 
 	prefix( prefix )
 	{
-
 		if( prefix.substr( -1 ) === '/' )
 			prefix = prefix.substr( 0, url.length - 1 );
 
@@ -58,32 +58,32 @@ class Route
 		return path;
 	}
 
-	get( path, middleware_cb = false, response_cb = false )
+	get( path, middleware_cb = false, response_cb = false, opts = {} )
 	{
 		path = this._setPath( path );
 
-		Controller.get( path, middleware_cb, response_cb )
+		Controller.get( path, middleware_cb, response_cb, opts )
 	}
 
-	del( path, middleware_cb = false, response_cb = false )
+	del( path, middleware_cb = false, response_cb = false, opts = {} )
 	{
 		path = this._setPath( path );
 
-		Controller.del( path, middleware_cb, response_cb )
+		Controller.del( path, middleware_cb, response_cb, opts )
 	}
 
-	post( path, middleware_cb = false, response_cb = false )
+	post( path, middleware_cb = false, response_cb = false, opts = {} )
 	{
 		path = this._setPath( path );
 
-		Controller.post( path, middleware_cb, response_cb )
+		Controller.post( path, middleware_cb, response_cb, opts )
 	}
 
-	put( path, middleware_cb = false, response_cb = false )
+	put( path, middleware_cb = false, response_cb = false, opts = {} )
 	{
 		path = this._setPath( path );
 
-		Controller.put( path, middleware_cb, response_cb )
+		Controller.put( path, middleware_cb, response_cb, opts )
 	}
 
 }

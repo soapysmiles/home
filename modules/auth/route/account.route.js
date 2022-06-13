@@ -1,9 +1,9 @@
-const Authenticate  = require( `${global.root_dir}/include/middleware/authenticate` );
-const Route  = require( `${global.root_dir}/inc_shr/route.mod/route.js` );
+const Authenticate  = require( `${global.root_dir}/include/middleware/authenticate.mod` );
+const Route  = require( `${global.root_dir}/inc_shr/route.mod` );
 
 const route = new Route(
 	{
-		prefix: global.api.baseRoutePrefix + '/account'
+		prefix: `${global.api.baseRoutePrefix}/account`
 	}
 );
 

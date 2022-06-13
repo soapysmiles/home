@@ -1,5 +1,5 @@
 global.cmd = require( `${global.root_dir}/inc_shr/cmd.js` );
-const Route = require( `${ global.root_dir }/inc_shr/route.mod/route.js` );
+const Route = require( `${ global.root_dir }/inc_shr/route.mod` );
 const route = new Route();
 
 let status = 'pending';

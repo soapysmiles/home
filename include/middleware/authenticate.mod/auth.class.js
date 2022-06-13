@@ -1,3 +1,5 @@
+const proj_root_dir = process.cwd();
+
 class Authenticate {
 
 	auth_type_arr = [];
@@ -19,7 +21,7 @@ class Authenticate {
 
 	loadAuthType()
 	{
-		const File = require( `${global.root_dir}/inc_shr/file.js` );
+		const File = require( `${proj_root_dir}/inc_shr/file.js` );
 		const file = new File();
 
 		const type_dir = `${__dirname}/auth_type`;
@@ -85,13 +87,26 @@ class Authenticate {
 				console.error( `[ERROR|403] ${e.message}` );
 			}
 
-			if( !resp )
+			if( resp )
+				return resp;
+
+			if( opts.getUserWithoutVerification )
 			{
-				this.onFailure( res, opts );
-				return false;
+				try
+				{
+					resp = this.auth_type_arr[ type ].getUserWithoutVerification( req, res, param_arr, this.type_opts[type] || {} );
+				}
+				catch( e )
+				{
+					console.error( `[ERROR|403] ${e.message}` );
+				}
 			}
 
-			return resp;
+			if( resp )
+				return resp;
+
+			this.onFailure( res, opts );
+			return false;
 		}
 	}
 }

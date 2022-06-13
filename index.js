@@ -5,18 +5,24 @@ global.root_dir = __dirname;
 //Load config
 new ( require( `${global.root_dir}/config/config.class.js` ) )();
 
-require( `${global.root_dir}/include/middleware/authenticate` )
-	.setTypeOpt( 'jwt', { secret: global.jwt.secret } );
+const Database = require( `${global.root_dir}/inc_shr/db.mod`);
+//test
+// console.log( new Database( 'user', {host:{
+// 			host: 'localhost',
+// 			port: 3306,
+// 			user: 'root',
+// 			password: '',
+// 			connectionLimit: 100,
+// 		} } ))
+
+require( `${global.root_dir}/include/middleware/authenticate.mod` )
+	.setTypeOpt( 'jwt', { secret_arr: global.jwt.secret_arr } );
+
+const Route        = require( `${global.root_dir}/inc_shr/route.mod` );
+
+const route = new Route();
 
 const Server      = require( `${global.root_dir}/inc_shr/server/server.js` );
-const Route        = require( `${global.root_dir}/inc_shr/route.mod/route.js` );
-
-const route = new Route(
-	{
-		prefix: global.api.baseRoutePrefix
-	}
-);
-const App    = require( `${global.root_dir}/inc_shr/server/app.js` );
 
 route.loadRoutes();
 route.pageNotFound( (req, res) =>

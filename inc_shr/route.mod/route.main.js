@@ -123,27 +123,27 @@ function _pageNotFound( req, res )
 	res.end( '404 Not found' );
 }
 
-function get( path, middleware_cb = false, response_cb = false )
+function get( path, middleware_cb = false, response_cb = false, opts = {} )
 {
-	_addRoute( 'GET', path, middleware_cb, response_cb )
+	_addRoute( 'GET', path, middleware_cb, response_cb, opts );
 }
 
-function del( path, middleware_cb = false, response_cb = false )
+function del( path, middleware_cb = false, response_cb = false, opts = {} )
 {
-	_addRoute( 'DELETE', path, middleware_cb, response_cb )
+	_addRoute( 'DELETE', path, middleware_cb, response_cb, opts );
 }
 
-function post( path, middleware_cb = false, response_cb = false )
+function post( path, middleware_cb = false, response_cb = false, opts = {}  )
 {
-	_addRoute( 'POST', path, middleware_cb, response_cb )
+	_addRoute( 'POST', path, middleware_cb, response_cb, opts );
 }
 
-function put( path, middleware_cb = false, response_cb = false )
+function put( path, middleware_cb = false, response_cb = false, opts = {} )
 {
-	_addRoute( 'PUT', path, middleware_cb, response_cb )
+	_addRoute( 'PUT', path, middleware_cb, response_cb, opts );
 }
 
-function _addRoute( method, path, callback_one = false, callback_two = false )
+function _addRoute( method, path, callback_one = false, callback_two = false, opts = {} )
 {
 	if( !callback_one && !callback_two )
 		throw new Error( 'Must supply a callback' );
@@ -170,7 +170,12 @@ function _addRoute( method, path, callback_one = false, callback_two = false )
 	}
 
 	if( path.substring( -1 ) === '/' )
-		path = path.substring( 0, path.length - 1 );
+	{
+		if( path.length !== 1)
+			path = path.substring( 0, path.length - 1 );
+		else
+			path = '/';
+	}
 
 	let param_arr = {};
 
@@ -201,10 +206,14 @@ function _addRoute( method, path, callback_one = false, callback_two = false )
 		}
 	}
 
-	path = route_prefix + path_part_arr.join( '/' );
+	path = path_part_arr.join( '/' );
+	if( opts.override_route_prefix !== undefined )
+		path = opts.override_route_prefix ?? '' + path;
+	else
+		path = route_prefix + path;
 
 	if( route_arr[method][path] )
-		throw new Error( 'Path is already taken')
+		throw new Error( 'Path is already taken' );
 
 	//Pre calculate for performance
 	let expects_param = Object.keys( param_arr ).length > 0;

@@ -12,4 +12,11 @@
 - Add config file support✔️
 
 - Add authentication via JWT
+  - add account routes
+    - register
+    - login
+    - reset password
+    - authentication must be:
+      - logins must be able to be disabled via config (separate)
+      - registrations must be able to be disabled via config (separate)
 - Add DB support

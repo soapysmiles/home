@@ -1,0 +1,26 @@
+{
+  "name": "home",
+  "version": "1.0.0",
+  "description": "",
+  "main": " ",
+  "dependencies": {
+    "promise-mysql": "^5.1.0"
+  },
+  "devDependencies": {
+  },
+  "scripts": {
+    "server-start-watch": "cd $(pwd)/server && nodemon ./server",
+    "client-start-watch": "cd $(pwd)/client && nodemon ./client",
+    "start-watch": "npm run client-start-watch & npm run server-start-watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheMeanMachine/home.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TheMeanMachine/home/issues"
+  },
+  "homepage": "https://github.com/TheMeanMachine/home#readme"
+}

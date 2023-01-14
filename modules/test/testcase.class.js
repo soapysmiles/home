@@ -26,7 +26,7 @@ class testcase
 
 	addResult(line_num, result)
 	{
-		this.results[line_num] = result;
+		this.results[line_num] += result;
 	}
 
 	failed()
@@ -34,12 +34,24 @@ class testcase
 		this.success = false;
 	}
 
-	toString(){
-	
 
+	toString()
+	{
 		const type = this.success ? cmd.green('[OK]  ') : cmd.red('[FAIL]');
-		const result = this.success ? '' : `\n\tErrors:\n${JSON.stringify(this.results, false, 2)}`;
-		return `${type} ${this.function_call} [Assertions: ${this.assertions}]${result}`;
+
+
+		let result_string = '';
+
+		if( !this.success )
+		{
+
+			for( const result in this.results )
+				result_string += `Line ${result}: ${this.results[result]}`;
+
+			result_string = `\n\tErrors:\n${result_string}`;
+		}
+
+		return `${type} ${this.function_call} [Assertions: ${this.assertions}]${result_string}`;
 	}
 };
 

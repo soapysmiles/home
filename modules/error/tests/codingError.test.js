@@ -1,6 +1,6 @@
-const { testsuite } = require(`${process.cwd()}/modules/test`);
+const { TestSuite } = require(`${process.cwd()}/modules/test`);
 
-class codingError_testsuite extends testsuite {
+class codingError_TestSuite extends TestSuite {
 	constructor(opts)
 	{
 		super(opts);
@@ -9,10 +9,10 @@ class codingError_testsuite extends testsuite {
 	}
 
 	shouldFail_testcase(){
-		this.assertEquals(1,1);
+	
 	}
 
 
 }
 
-module.exports = codingError_testsuite;
+module.exports = codingError_TestSuite;

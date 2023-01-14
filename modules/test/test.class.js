@@ -22,8 +22,7 @@ class Test
 		this.root_dirs = root_dirs;
 
 		this.loadTests();
-		this.runTests();
-		this.displayResults();
+		
 	}
 
 	loadTests()
@@ -50,7 +49,7 @@ class Test
 		}
 	}
 
-	runTests()
+	runTests( displayResults = true )
 	{
 		for( const test_dir in this.tests_dirs )
 		{
@@ -71,8 +70,9 @@ class Test
 					test_suite_class_instance[test_method]();
 				}
 
-				test_suite_class_instance.displayResults();
-
+				if( displayResults )
+					test_suite_class_instance.displayResults();
+				
 				this.results.push(test_suite_class_instance);
 			}
 		}
@@ -81,7 +81,6 @@ class Test
 	displayResults()
 	{
 
-		
 	}
 
 	registerResult( test )

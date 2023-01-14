@@ -11,21 +11,30 @@ class testsuite
 	success = true;
 	results = {};
 
-	constructor( opts )
+	constructor( opts = {} )
 	{
 		if( opts.path )
 			this.path = opts.path;
 	}
 
-	displayResults(){
+	displayResults()
+	{
 		for( const result in this.results ){
 			console.log( `${this.results[result].toString()}` );
 		}
 	}
 
-	_assert(callback, values )
+	getAssertions()
 	{
+		let assertions = 0;
+		for( const test_case in this.results )
+			assertions += this.results[test_case].assertions;
 
+		return assertions;
+	}
+
+	_assert(callback, ...values )
+	{
 		const e = new Error();
 	    const frame = e.stack.split("\n")[3];
 	    const function_call = frame.split(" ")[5];
@@ -37,7 +46,7 @@ class testsuite
 				function_call: function_call,
 			});
 
-		const test_case = this.results[function_call]
+		const test_case = this.results[function_call];
 
 		try
 		{
@@ -45,32 +54,56 @@ class testsuite
 		}
 		catch(e)
 		{
-		    test_case.addResult(line_num, e.toString());
+			const error_msg = `${cmd.red(e.toString())}\n ${e.stack}`;
+
+		    test_case.addResult(line_num, error_msg);
 		    test_case.failed();
 		}
+
 
 		test_case.assertions++;
 
 		this.success = this.success === false ? false : test_case.success;
 	}
 
-	assertEquals(...values)
+	assertAllEquals(...values)
 	{
 
-
 		this._assert((...vals) => {
+
 			if( !Array.isArray( vals ) || vals.length === 0 )
 				throw new Error(`No given values to compare`);
 
 			let val = vals[0];
-
 			for( const cur_val of vals ){
 				if( cur_val !== val )
 					throw new Error(`Value ${cur_val} is not equal to ${val}`)
 
 				val = cur_val;
 			}
-		}, values)
+		}, ...values)
+	}
+
+	assertBothEquals(val_a, val_b)
+	{
+		this._assert((val_a, val_b) => {
+
+			if( val_a !== val_b)
+				throw new Error(`Value ${val_a} is not equal to ${val_b}`)
+
+		}, val_a, val_b)
+	}
+
+	assertEmpty(...values)
+	{
+		this._assert((...vals) => {
+			if( !Array.isArray( vals ) || vals.length === 0 )
+				throw new Error(`No given values to compare`);
+			for( const cur_val of vals ){
+				if( cur_val )
+					throw new Error(`Value "${cur_val}" is not empty`)
+			}
+		}, ...values)
 	}
 
 	toString( full = false ){

@@ -1,3 +1,3 @@
 module.exports = {
-	testsuite: require(`${__dirname}/testsuite.class.js`),
+	TestSuite: require(`${__dirname}/testsuite.class.js`),
 };

@@ -84,7 +84,7 @@ class Authenticate {
 			}
 			catch( e )
 			{
-				console.error( `[ERROR|403] ${e.message}` );
+				throw executionError(e);
 			}
 
 			if( resp )
@@ -98,7 +98,7 @@ class Authenticate {
 				}
 				catch( e )
 				{
-					console.error( `[ERROR|403] ${e.message}` );
+					throw executionError(e);
 				}
 			}
 

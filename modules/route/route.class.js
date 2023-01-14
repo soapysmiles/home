@@ -16,7 +16,7 @@ class Route
 	{
 		const file = new File();
 
-		const route_dir_arr = file.retrieveDirPathArr( project_dir, 'route' );
+		const route_dir_arr = file.retrieveDirPathArr( project_dir, { file_suffix: 'route' } );
 
 		for( const route_dir of route_dir_arr )
 		{

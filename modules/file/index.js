@@ -48,10 +48,13 @@ class File {
 		return dir_arr;
 	}
 
-	retrieveFileArrFromDir( path, file_suffix = false )
+	/**
+	 * 
+	 * @type {Object}
+	 */
+	retrieveFileArrFromDir( path, opts = {} )
 	{
 		const file_arr = this.retrieveFileArray( path, { withFileTypes: true } );
-
 
 		let result_file_arr = [];
 		for( const file of file_arr )
@@ -60,17 +63,23 @@ class File {
 
 			//Ignore directories
 			if( file.isDirectory() )
-				continue;
+			{
+				if( opts.recursive !== true )
+					continue;
+				
+				//Todo recursive
+
+			}
 
 			//Ignore hidden files
 			if( file_name.substring( 0, 1 ) === '.' )
 				continue;
 
 			//Suffix cannot fit or is larger than the file name
-			if( file_suffix !== false && file_name.length <= file_suffix.length )
+			if( opts.file_suffix && file_name.length <= opts.file_suffix.length )
 				continue;
 
-			if( file_suffix === false || file_name.substring( file_name.length - file_suffix.length, file_name.length ) === file_suffix )
+			if( !opts.file_suffix || file_name.substring( file_name.length - opts.file_suffix.length, file_name.length ) === opts.file_suffix )
 				result_file_arr.push( path + '/' + file_name );
 		}
 

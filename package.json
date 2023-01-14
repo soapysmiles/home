@@ -9,6 +9,8 @@
   "devDependencies": {
   },
   "scripts": {
+    "modules-test": "nodemon modules/test/run.js",
+    "server-test": "cd $(pwd)/server && nodemon modules/test/index.js",
     "server-start-watch": "cd $(pwd)/server && nodemon ./server",
     "client-start-watch": "cd $(pwd)/client && nodemon ./client",
     "start-watch": "npm run client-start-watch & npm run server-start-watch"
